@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:5.7.38
+    container_name: ms-mysql
+    environment: 
+      MYSQL_DATABASE: ${MS_MYSQL_DB}
+      MYSQL_ROOT_PASSWORD: ${MS_MYSQL_ROOT_PASSWORD}
+    volumns:
+      - ${MS_BASE_PATH}/etc/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ${MS_BASE_PATH}/bin/mysql:/docker-entrypoint-initdb.d/
+      - ms-mysql-data:/var/lib/mysql
+    networks:
+      - ms-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MS_MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  ms-mysql-data:
