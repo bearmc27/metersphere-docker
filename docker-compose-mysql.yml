@@ -7,7 +7,7 @@ services:
     environment: 
       MYSQL_DATABASE: ${MS_MYSQL_DB}
       MYSQL_ROOT_PASSWORD: ${MS_MYSQL_ROOT_PASSWORD}
-    volumns:
+    volumes:
       - ${MS_BASE_PATH}/etc/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
       - ${MS_BASE_PATH}/bin/mysql:/docker-entrypoint-initdb.d/
       - ms-mysql-data:/var/lib/mysql
