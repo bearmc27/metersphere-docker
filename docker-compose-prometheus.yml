@@ -5,7 +5,7 @@ services:
     image: bitnami/prometheus:2.37.0
     container_name: ms-prometheus
     volumes:
-      - ms-prometheus-conf:/etc/prometheus/
+      - ${MS_BASE_PATH}/etc/prometheus/:/etc/prometheus/
       - ms-prometheus-data:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
@@ -24,4 +24,3 @@ services:
 
 volumes:
   ms-prometheus-data:
-  ms-prometheus-conf:
