@@ -1,0 +1,77 @@
+version: "3.8"
+
+services:
+  ms-server:
+    image: metersphere/metersphere:v1.20-oss
+    container_name: ms-server
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MS_MYSQL_DB}?autoReconnect=false&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false&sessionVariables=sql_mode=%27STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION%27
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MS_MYSQL_ROOT_PASSWORD}
+      KAFKA_PARTITIONS: 4
+      KAFKA_REPLICAS: 1
+      KAFKA_TOPIC: ${MS_KAFKA_TOPIC}
+      KAFKA_LOG_TOPIC: ${MS_KAFKA_LOG_TOPIC}
+      KAFKA_TEST_TOPIC: ${MS_KAFKA_TEST_TOPIC}
+      KAFKA_REPORT_TOPIC: ${MS_KAFKA_REPORT_TOPIC}
+      KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+      JMETER_IMAGE: metersphere/jmeter-master:5.4.1-ms3-jdk8
+      K8S_NODE-CONTROLLER-IMAGE: metersphere/ms-node-controller:v1.20
+      TCP_MOCK_PORT: ${MS_TCP_MOCK_PORT}
+      SESSION_TIMEOUT: 2592000
+      FORMAT_MESSAGES_PATTERN_DISABLE_LOOKUPS: "true"
+      SPRING_SESSION_STORE-TYPE: redis
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: ${MS_REDIS_PASSWORD}
+    ports:
+      - ${MS_SERVER_PORT}:8081
+      - ${MS_TCP_MOCK_PORT}:${MS_TCP_MOCK_PORT}
+    volumes:
+      - ${MS_BASE_PATH}/etc/metersphere/metersphere.properties:/opt/metersphere/conf/metersphere.properties
+      - ms-logs:/opt/metersphere/logs
+      - ms-data:/opt/metersphere/data
+    networks:
+      - ms-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "nc", "-zv", "localhost", "8081"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  ms-data-streaming:
+    image: metersphere/data-streaming:v1.20
+    container_name: ms-data-streaming
+    environment:
+      HOST_HOSTNAME: $HOSTNAME
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MS_MYSQL_DB}?autoReconnect=false&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MS_MYSQL_PASSWORD}
+      KAFKA_PARTITIONS: 4
+      KAFKA_REPLICAS: 1
+      KAFKA_TOPIC: ${MS_KAFKA_TOPIC}
+      KAFKA_LOG_TOPIC: ${MS_KAFKA_LOG_TOPIC}
+      KAFKA_TEST_TOPIC: ${MS_KAFKA_TEST_TOPIC}
+      KAFKA_REPORT_TOPIC: ${MS_KAFKA_REPORT_TOPIC}
+      KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+      FORMAT_MESSAGES_PATTERN_DISABLE_LOOKUPS: "true"
+    volumes:
+      - ${MS_BASE_PATH}/etc/metersphere/metersphere.properties:/opt/metersphere/conf/metersphere.properties
+      - ms-data-streaming-logs:/opt/metersphere/logs/data-streaming
+    networks:
+      - ms-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "nc", "-zv", "localhost", "8084"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  ms-logs:
+  ms-data:
+  ms-data-streaming-logs:
+
+networks:
+  ms-network:
