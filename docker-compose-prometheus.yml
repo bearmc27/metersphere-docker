@@ -19,7 +19,7 @@ services:
     healthcheck:
       test: ["CMD", "nc", "-zv", "localhost", "9090"]
       interval: 10s
-      timeout: 5s
+      timeout: 10s
       retries: 10
 
 volumes:

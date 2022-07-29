@@ -37,7 +37,7 @@ services:
     healthcheck:
       test: ["CMD", "nc", "-zv", "localhost", "8081"]
       interval: 10s
-      timeout: 5s
+      timeout: 10s
       retries: 10
 
   ms-data-streaming:
@@ -65,7 +65,7 @@ services:
     healthcheck:
       test: ["CMD", "nc", "-zv", "localhost", "8084"]
       interval: 10s
-      timeout: 5s
+      timeout: 10s
       retries: 10
 
 volumes:

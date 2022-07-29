@@ -17,7 +17,7 @@ services:
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MS_MYSQL_ROOT_PASSWORD}"]
       interval: 10s
-      timeout: 5s
+      timeout: 10s
       retries: 10
   ms-server:
     depends_on:
