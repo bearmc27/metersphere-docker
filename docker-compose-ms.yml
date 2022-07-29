@@ -72,6 +72,3 @@ volumes:
   ms-logs:
   ms-data:
   ms-data-streaming-logs:
-
-networks:
-  ms-network:
