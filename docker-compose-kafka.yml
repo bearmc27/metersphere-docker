@@ -41,7 +41,7 @@ services:
       - ms-network
     restart: always
     healthcheck:
-      test: ["CMD", "bash", "-c", "< /dev/tcp/localhost/9093"]
+      test: ["CMD", "bash", "-c", "< /dev/tcp/localhost/9092"]
       interval: 10s
       timeout: 5s
       retries: 10
