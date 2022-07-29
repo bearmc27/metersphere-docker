@@ -47,7 +47,7 @@ services:
       HOST_HOSTNAME: $HOSTNAME
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MS_MYSQL_DB}?autoReconnect=false&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: ${MS_MYSQL_PASSWORD}
+      SPRING_DATASOURCE_PASSWORD: ${MS_MYSQL_ROOT_PASSWORD}
       KAFKA_PARTITIONS: 4
       KAFKA_REPLICAS: 1
       KAFKA_TOPIC: ${MS_KAFKA_TOPIC}
