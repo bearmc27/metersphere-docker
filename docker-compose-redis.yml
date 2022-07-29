@@ -5,7 +5,7 @@ services:
     image: redis:6.2.7
     container_name: ms-redis
     volumes:
-      - ${MS_BASE}/etc/redis/redis.conf:/etc/redis/redis.conf
+      - ${MS_BASE_PATH}/etc/redis/redis.conf:/etc/redis/redis.conf
       - ms-redis-data:/data
     command: redis-server /etc/redis/redis.conf --requirepass ${MS_REDIS_PASSWORD}
     networks:
