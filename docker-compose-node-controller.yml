@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  ms-node-controller:
+    image: metersphere/node-controller:v1.20
+    container_name: ms-node-controller
+    environment:
+      HOST_HOSTNAME: $HOSTNAME
+      FORMAT_MESSAGES_PATTERN_DISABLE_LOOKUPS: "true"
+    ports:
+      - 8082:8082
+      - 9100:9100
+    volumes:
+      - ${MS_BASE_PATH}/etc/metersphere/metersphere.properties:/opt/metersphere/conf/metersphere.properties
+      - ms-node-controller-logs:/opt/metersphere/logs
+      - ms-node-controller-data:/opt/metersphere/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    mem_limit: 1024m
+    restart: always
+    healthcheck:
+      test: ["CMD", "nc", "-zv", "localhost", "8082"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  node-exporter:
+    image: prom/node-exporter:v1.3.1
+    container_name: ms-node-exporter
+    pid: host
+    user: root
+    privileged: true
+    volumes:
+      - /:/rootfs:ro,rslave
+    command:
+      - "--path.rootfs=/rootfs"
+      - "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)"
+    network_mode: service:ms-node-controller
+    restart: always
+    healthcheck:
+      test: ["CMD", "nc", "-zv", "localhost", "9100"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+volumes:
+  ms-node-controller-logs:
+  ms-node-controller-data:
